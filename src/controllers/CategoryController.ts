@@ -13,14 +13,19 @@ const service = new ApiService(Category);
 
 class CategoryController {
   getAllCategories = async (
-    req: Request,
+    req: Request | any,
     res: Response,
     next: NextFunction
   ) => {
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 5;
+    const skip = (page - 1) * limit;
     const categories = await Category.find({
       relations: {
         image: true,
       },
+      skip: skip,
+      take: limit,
     });
     return res.status(200).json(categories);
   };
@@ -47,7 +52,7 @@ class CategoryController {
   };
 
   getAllProductByCategoryName = async (
-    req: Request,
+    req: Request | any,
     res: Response,
     next: NextFunction
   ) => {

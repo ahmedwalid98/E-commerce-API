@@ -11,12 +11,17 @@ import { cloud } from "../utils/Cloudinary";
 const service = new ApiService(Product);
 
 class ProductController {
-  async getAllProducts(req: Request, res: Response, next: NextFunction) {
+  async getAllProducts(req: Request | any, res: Response, next: NextFunction) {
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit * 1 || 5;
+    const skip = (page - 1) * limit;
     const products = await Product.find({
       relations: {
         category: true,
         images: true,
       },
+      take: limit,
+      skip: skip,
     });
     return res.status(200).json(products);
   }
